@@ -1,8 +1,8 @@
 {
   "name": "@alex-decentral/min-test-package",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
-  "main": "index.js",
+  "main": "lib/src/index.js",
   "scripts": {
     "generate": "typechain --target=ethers-v5 'abi/*.json'",
     "start": "ts-node ./src/index.ts",
