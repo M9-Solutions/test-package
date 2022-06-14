@@ -31,9 +31,9 @@ export interface TokenInterface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
-    "initialize(string,string,string)": FunctionFragment;
+    "initialize(string,string)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(uint256)": FunctionFragment;
+    "mint(uint256,string)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
@@ -83,13 +83,16 @@ export interface TokenInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, string]
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
-  encodeFunctionData(functionFragment: "mint", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "mint",
+    values: [BigNumberish, string]
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -294,7 +297,6 @@ export interface Token extends BaseContract {
     initialize(
       name: string,
       symbol: string,
-      uri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -306,6 +308,7 @@ export interface Token extends BaseContract {
 
     mint(
       _serialNumber: BigNumberish,
+      _uri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -390,7 +393,6 @@ export interface Token extends BaseContract {
   initialize(
     name: string,
     symbol: string,
-    uri: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -402,6 +404,7 @@ export interface Token extends BaseContract {
 
   mint(
     _serialNumber: BigNumberish,
+    _uri: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -480,7 +483,6 @@ export interface Token extends BaseContract {
     initialize(
       name: string,
       symbol: string,
-      uri: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -490,7 +492,11 @@ export interface Token extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    mint(_serialNumber: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    mint(
+      _serialNumber: BigNumberish,
+      _uri: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -613,7 +619,6 @@ export interface Token extends BaseContract {
     initialize(
       name: string,
       symbol: string,
-      uri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -625,6 +630,7 @@ export interface Token extends BaseContract {
 
     mint(
       _serialNumber: BigNumberish,
+      _uri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -713,7 +719,6 @@ export interface Token extends BaseContract {
     initialize(
       name: string,
       symbol: string,
-      uri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -725,6 +730,7 @@ export interface Token extends BaseContract {
 
     mint(
       _serialNumber: BigNumberish,
+      _uri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

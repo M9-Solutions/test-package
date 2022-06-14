@@ -17,15 +17,16 @@ describe("Token Tests", () => {
     const signer = new Wallet(privateKey, provider);
 
     let token = Token__factory.connect(contractAddress, signer);
-    const options = { gasPrice: provider.getGasPrice() };
 
     describe("Mint Function", () => {
         it("Should mint a token", async () => {
+            const options = { gasPrice: await provider.getGasPrice() };
+            const tokenURI = "https://ipfs.moralis.io/ipfs/QmUTQ7qyXnhQh4CXbN6ad55RgavFMFfrs7vMeqXGxbuZKc"
             let balance = (await token.balanceOf(signer.address)).toNumber();
 
             await token.whitelist(signer.address, balance+1, options);
             console.log("whitelisted");
-            await token.mint(balance+1, options);
+            await token.mint(balance+1, tokenURI, options);
 
             let postBalance = (await token.balanceOf(signer.address)).toNumber();
             expect(postBalance).to.eq(balance+1);
