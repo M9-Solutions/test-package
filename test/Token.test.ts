@@ -21,7 +21,7 @@ describe("Token Tests", () => {
     describe("Mint Function", () => {
         it("Should mint a token", async () => {
             const options = { gasPrice: await provider.getGasPrice() };
-            const tokenURI = "https://ipfs.moralis.io/ipfs/QmUTQ7qyXnhQh4CXbN6ad55RgavFMFfrs7vMeqXGxbuZKc"
+            const tokenURI = "https://ipfs.moralis.io/ipfs/QmfCrLLVunAA68fBo2rAafo8dKK3W54N44DAwkVTA3MLSZ"
             let balance = (await token.balanceOf(signer.address)).toNumber();
 
             await token.whitelist(signer.address, balance+1, options);
