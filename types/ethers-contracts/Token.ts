@@ -9,6 +9,7 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -26,14 +27,28 @@ import type {
   OnEvent,
 } from "./common";
 
+export declare namespace IToken {
+  export type ListingStruct = { min: BigNumberish; max: BigNumberish };
+
+  export type ListingStructOutput = [BigNumber, BigNumber] & {
+    min: BigNumber;
+    max: BigNumber;
+  };
+}
+
 export interface TokenInterface extends utils.Interface {
   functions: {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "blacklist(address,uint256)": FunctionFragment;
+    "burn(uint256)": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
+    "getListing(uint256)": FunctionFragment;
+    "getWhitelist(address,uint256)": FunctionFragment;
     "initialize(string,string)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(uint256,string)": FunctionFragment;
+    "market()": FunctionFragment;
+    "mint(uint256,string,uint256,uint256)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
@@ -41,6 +56,7 @@ export interface TokenInterface extends utils.Interface {
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
+    "setMarket(address)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
@@ -53,9 +69,14 @@ export interface TokenInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "approve"
       | "balanceOf"
+      | "blacklist"
+      | "burn"
       | "getApproved"
+      | "getListing"
+      | "getWhitelist"
       | "initialize"
       | "isApprovedForAll"
+      | "market"
       | "mint"
       | "name"
       | "owner"
@@ -64,6 +85,7 @@ export interface TokenInterface extends utils.Interface {
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
+      | "setMarket"
       | "supportsInterface"
       | "symbol"
       | "tokenURI"
@@ -78,8 +100,21 @@ export interface TokenInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "blacklist",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "burn", values: [BigNumberish]): string;
+  encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getListing",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getWhitelist",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
@@ -89,9 +124,10 @@ export interface TokenInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
+  encodeFunctionData(functionFragment: "market", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [BigNumberish, string]
+    values: [BigNumberish, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -115,6 +151,7 @@ export interface TokenInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
   ): string;
+  encodeFunctionData(functionFragment: "setMarket", values: [string]): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
@@ -139,8 +176,15 @@ export interface TokenInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "blacklist", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "burn", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getListing", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getWhitelist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
@@ -148,6 +192,7 @@ export interface TokenInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "market", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -168,6 +213,7 @@ export interface TokenInterface extends utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setMarket", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -289,10 +335,32 @@ export interface Token extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    blacklist(
+      _user: string,
+      _serialNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    burn(
+      _serialNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    getListing(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[IToken.ListingStructOutput]>;
+
+    getWhitelist(
+      _user: string,
+      _serialNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     initialize(
       name: string,
@@ -306,10 +374,14 @@ export interface Token extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    market(overrides?: CallOverrides): Promise<[string]>;
+
     mint(
       _serialNumber: BigNumberish,
       _uri: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      minPrice: BigNumberish,
+      maxPrice: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
@@ -343,6 +415,11 @@ export interface Token extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMarket(
+      _market: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -385,10 +462,32 @@ export interface Token extends BaseContract {
 
   balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  blacklist(
+    _user: string,
+    _serialNumber: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  burn(
+    _serialNumber: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   getApproved(
     tokenId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  getListing(
+    tokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<IToken.ListingStructOutput>;
+
+  getWhitelist(
+    _user: string,
+    _serialNumber: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   initialize(
     name: string,
@@ -402,10 +501,14 @@ export interface Token extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  market(overrides?: CallOverrides): Promise<string>;
+
   mint(
     _serialNumber: BigNumberish,
     _uri: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    minPrice: BigNumberish,
+    maxPrice: BigNumberish,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
@@ -436,6 +539,11 @@ export interface Token extends BaseContract {
   setApprovalForAll(
     operator: string,
     approved: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMarket(
+    _market: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -475,10 +583,29 @@ export interface Token extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    blacklist(
+      _user: string,
+      _serialNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    burn(_serialNumber: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getListing(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<IToken.ListingStructOutput>;
+
+    getWhitelist(
+      _user: string,
+      _serialNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     initialize(
       name: string,
@@ -492,9 +619,13 @@ export interface Token extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    market(overrides?: CallOverrides): Promise<string>;
+
     mint(
       _serialNumber: BigNumberish,
       _uri: string,
+      minPrice: BigNumberish,
+      maxPrice: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -526,6 +657,8 @@ export interface Token extends BaseContract {
       approved: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setMarket(_market: string, overrides?: CallOverrides): Promise<void>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -611,8 +744,30 @@ export interface Token extends BaseContract {
 
     balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    blacklist(
+      _user: string,
+      _serialNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    burn(
+      _serialNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getApproved(
       tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getListing(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getWhitelist(
+      _user: string,
+      _serialNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -628,10 +783,14 @@ export interface Token extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    market(overrides?: CallOverrides): Promise<BigNumber>;
+
     mint(
       _serialNumber: BigNumberish,
       _uri: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      minPrice: BigNumberish,
+      maxPrice: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -665,6 +824,11 @@ export interface Token extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMarket(
+      _market: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -711,8 +875,30 @@ export interface Token extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    blacklist(
+      _user: string,
+      _serialNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    burn(
+      _serialNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     getApproved(
       tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getListing(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getWhitelist(
+      _user: string,
+      _serialNumber: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -728,10 +914,14 @@ export interface Token extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    market(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     mint(
       _serialNumber: BigNumberish,
       _uri: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      minPrice: BigNumberish,
+      maxPrice: BigNumberish,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -765,6 +955,11 @@ export interface Token extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMarket(
+      _market: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
