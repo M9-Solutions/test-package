@@ -13,9 +13,9 @@ Create a `PRIVATE_KEY` variable and assign your wallet private key to it.
 Create a `TOKEN_ADDRESS` variable and assign the Token contract address to it.
 ```e.i.: TOKEN_ADDRESS="0x0123456789abcdefg"```
 
-### Usage
+### Usage 
+npm run generate 
 npm run build  
-npm run generate  
 npm test  
   
 ### Updating ABI
