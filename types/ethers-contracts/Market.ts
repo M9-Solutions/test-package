@@ -27,9 +27,19 @@ import type {
   OnEvent,
 } from "./common";
 
+export declare namespace IMarket {
+  export type OfferStruct = { price: BigNumberish; offerer: string };
+
+  export type OfferStructOutput = [BigNumber, string] & {
+    price: BigNumber;
+    offerer: string;
+  };
+}
+
 export interface MarketInterface extends utils.Interface {
   functions: {
     "acceptOffer(uint256)": FunctionFragment;
+    "getOffer(uint256)": FunctionFragment;
     "initialize(address)": FunctionFragment;
     "offer(uint256,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -41,6 +51,7 @@ export interface MarketInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "acceptOffer"
+      | "getOffer"
       | "initialize"
       | "offer"
       | "owner"
@@ -51,6 +62,10 @@ export interface MarketInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "acceptOffer",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getOffer",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "initialize", values: [string]): string;
@@ -73,6 +88,7 @@ export interface MarketInterface extends utils.Interface {
     functionFragment: "acceptOffer",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getOffer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "offer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -179,6 +195,11 @@ export interface Market extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    getOffer(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[IMarket.OfferStructOutput]>;
+
     initialize(
       _token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -209,6 +230,11 @@ export interface Market extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  getOffer(
+    tokenId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<IMarket.OfferStructOutput>;
+
   initialize(
     _token: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -238,6 +264,11 @@ export interface Market extends BaseContract {
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    getOffer(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<IMarket.OfferStructOutput>;
 
     initialize(_token: string, overrides?: CallOverrides): Promise<void>;
 
@@ -288,6 +319,11 @@ export interface Market extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    getOffer(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     initialize(
       _token: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -317,6 +353,11 @@ export interface Market extends BaseContract {
     acceptOffer(
       tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getOffer(
+      tokenId: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     initialize(

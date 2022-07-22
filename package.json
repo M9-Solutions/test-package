@@ -1,6 +1,6 @@
 {
   "name": "@alex-decentral/min-test-package",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "",
   "main": "lib/src/index.js",
   "scripts": {

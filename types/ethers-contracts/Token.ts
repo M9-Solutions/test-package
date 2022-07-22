@@ -63,6 +63,7 @@ export interface TokenInterface extends utils.Interface {
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "whitelist(address,uint256)": FunctionFragment;
+    "withdrawFunds(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -92,6 +93,7 @@ export interface TokenInterface extends utils.Interface {
       | "transferFrom"
       | "transferOwnership"
       | "whitelist"
+      | "withdrawFunds"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -173,6 +175,10 @@ export interface TokenInterface extends utils.Interface {
     functionFragment: "whitelist",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawFunds",
+    values: [BigNumberish]
+  ): string;
 
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
@@ -229,6 +235,10 @@ export interface TokenInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "whitelist", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawFunds",
+    data: BytesLike
+  ): Result;
 
   events: {
     "Approval(address,address,uint256)": EventFragment;
@@ -452,6 +462,11 @@ export interface Token extends BaseContract {
       _serialNumber: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    withdrawFunds(
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   approve(
@@ -574,6 +589,11 @@ export interface Token extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  withdrawFunds(
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     approve(
       to: string,
@@ -684,6 +704,11 @@ export interface Token extends BaseContract {
     whitelist(
       _user: string,
       _serialNumber: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawFunds(
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -861,6 +886,11 @@ export interface Token extends BaseContract {
       _serialNumber: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    withdrawFunds(
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -990,6 +1020,11 @@ export interface Token extends BaseContract {
     whitelist(
       _user: string,
       _serialNumber: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawFunds(
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
